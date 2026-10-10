@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AeroTwin — AI-Powered UAV Engine Health Monitor and Predictive Maintenance Dashboard by AeroSentinels.">
+    <title>AeroTwin | UAV Engine Health Monitor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ═══ SIDEBAR ═══════════════════════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar">
+
+        <!-- Brand -->
+        <div class="sidebar-brand">
+            <a href="#" class="brand-logo" id="brandLink">
+                <span class="brand-hex">⬡</span>
+                <div>
+                    <span class="brand-name">AEROTWIN</span>
+                    <span class="brand-sub">UAV Engine Health Monitor</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav" id="sidebarNav">
+            <div class="nav-section-label">Operations</div>
+            <a class="nav-item active" data-page="overview">
+                <span class="nav-icon">◈</span> Overview
+            </a>
+            <a class="nav-item" data-page="digital-twin">
+                <span class="nav-icon">⬡</span> Digital Twin
+            </a>
+            <a class="nav-item" data-page="telemetry">
+                <span class="nav-icon">◇</span> Live Telemetry
+            </a>
+
+            <div class="nav-section-label">Analysis</div>
+            <a class="nav-item" data-page="anomaly">
+                <span class="nav-icon">△</span> Anomaly Detection
+            </a>
+            <a class="nav-item" data-page="xai">
+                <span class="nav-icon">◎</span> Explainable AI
+            </a>
+            <a class="nav-item" data-page="predictive">
+                <span class="nav-icon">◐</span> Predictive Maintenance
+                <span class="nav-badge proto">PROTO</span>
+            </a>
+
+            <div class="nav-section-label">History</div>
+            <a class="nav-item" data-page="alerts">
+                <span class="nav-icon">⚑</span> Alerts & Diagnostics
+            </a>
+
+            <div class="nav-section-label">System</div>
+            <a class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙</span> Settings / About
+            </a>
+        </nav>
+
+        <!-- Scenario Selector -->
+        <div class="sidebar-controls">
+            <div class="control-label">⬡ Scenario Protocol</div>
+            <select class="scenario-select" id="scenarioSelect">
+                <!-- Populated by JS -->
+            </select>
+        </div>
+
+        <!-- Meta -->
+        <div class="sidebar-meta">
+            <div class="demo-badge">⬡ DEMO MODE</div>
+            <div class="sidebar-footer-text">
+                Phase 2A — All values are synthetic demo data.<br>
+                Phase 2B connects to Phase 1 ML pipeline.
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- ═══ MAIN AREA ═════════════════════════════════════════════════════ -->
+    <div class="main-area" id="mainArea">
+
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+                <div class="topbar-crumbs">
+                    AeroTwin / <span class="crumb-active" id="crumbActive">Overview</span>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="status-pill"><div class="status-dot"></div> ONLINE</div>
+                <div class="topbar-scenario" id="topbarScenario">SCENARIO: Healthy</div>
+                <div class="topbar-clock" id="topbarClock">--:--:--</div>
+                <button class="btn-reset" id="resetBtn">Reset Demo</button>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="content-area" id="contentArea">
+
+            <!-- ── PAGE: OVERVIEW ─────────────────────────────────────── -->
+            <div class="page-view active" id="page-overview">
+                <!-- Hero + Diagnosis -->
+                <div class="grid-hero" id="overviewHeroGrid"></div>
+                <div style="height:1rem"></div>
+
+                <!-- Sensor Cards -->
+                <div class="section-header">
+                    <div class="sec-label">Sensor Monitoring</div>
+                    <div class="sec-subtitle">Five-parameter engine telemetry</div>
+                </div>
+                <div class="grid-5" id="overviewSensors"></div>
+                <div style="height:1rem"></div>
+
+                <!-- Anomaly Analysis -->
+                <div class="section-header">
+                    <div class="sec-label">Anomaly Analysis</div>
+                </div>
+                <div class="grid-hero" id="overviewXaiGrid"></div>
+                <div style="height:1rem"></div>
+
+                <!-- Trend Charts -->
+                <div class="section-header">
+                    <div class="sec-label">Trend Analysis</div>
+                    <div class="sec-subtitle">Engine behaviour over the last 10 minutes (demo data)</div>
+                </div>
+                <div class="panel" style="margin-bottom:1rem">
+                    <div class="chart-header">
+                        <div class="chart-title">Engine Behaviour Timeline</div>
+                        <div class="sensor-check-group" id="overviewSensorChecks"></div>
+                    </div>
+                    <div class="chart-container" style="height:280px">
+                        <canvas id="overviewTrendChart"></canvas>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="panel">
+                        <div class="chart-header">
+                            <div class="chart-title">Anomaly Score Over Time</div>
+                        </div>
+                        <div class="chart-container" style="height:180px">
+                            <canvas id="overviewAnomalyChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="chart-header">
+                            <div class="chart-title">Health State Timeline</div>
+                        </div>
+                        <div class="chart-container" style="height:180px">
+                            <canvas id="overviewHealthChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── PAGE: DIGITAL TWIN ─────────────────────────────────── -->
+            <div class="page-view" id="page-digital-twin">
+                <div class="section-header">
+                    <div class="sec-label">Digital Twin</div>
+                    <div class="sec-subtitle">Engine component health visualization</div>
+                </div>
+                <div class="twin-container">
+                    <div class="engine-schematic" id="engineSchematic">
+                        <!-- SVG engine diagram rendered by JS -->
+                    </div>
+                    <div class="twin-details" id="twinDetails">
+                        <!-- Component details rendered by JS -->
+                    </div>
+                </div>
+                <div style="height:1rem"></div>
+                <div class="twin-legend" id="twinLegend"></div>
+            </div>
+
+            <!-- ── PAGE: LIVE TELEMETRY ───────────────────────────────── -->
+            <div class="page-view" id="page-telemetry">
+                <div class="section-header">
+                    <div class="sec-label">Live Telemetry</div>
+                    <div class="sec-subtitle">Multi-sensor historical traces (demo data)</div>
+                </div>
+                <div class="panel" style="margin-bottom:1rem">
+                    <div class="chart-header">
+                        <div class="chart-title">Sensor Selection</div>
+                        <div class="sensor-check-group" id="telemetrySensorChecks"></div>
+                    </div>
+                </div>
+                <!-- Individual sensor charts -->
+                <div id="telemetryChartsContainer"></div>
+            </div>
+
+            <!-- ── PAGE: ANOMALY DETECTION ────────────────────────────── -->
+            <div class="page-view" id="page-anomaly">
+                <div class="section-header">
+                    <div class="sec-label">Anomaly Detection</div>
+                    <div class="sec-subtitle">Score timeline with threshold analysis</div>
+                </div>
+                <div class="panel" style="margin-bottom:1rem">
+                    <div class="chart-header">
+                        <div class="chart-title">Anomaly Score Timeline</div>
+                    </div>
+                    <div class="chart-container" style="height:300px">
+                        <canvas id="anomalyFullChart"></canvas>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="panel">
+                        <div class="chart-header">
+                            <div class="chart-title">Health State Timeline</div>
+                        </div>
+                        <div class="chart-container" style="height:200px">
+                            <canvas id="anomalyHealthChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel" id="anomalySummaryPanel">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── PAGE: EXPLAINABLE AI ───────────────────────────────── -->
+            <div class="page-view" id="page-xai">
+                <div class="section-header">
+                    <div class="sec-label">Explainable AI</div>
+                    <div class="sec-subtitle">Understanding the model's reasoning</div>
+                </div>
+                <div class="grid-hero" id="xaiFullGrid"></div>
+                <div style="height:1rem"></div>
+                <div class="panel" id="xaiTechnicalPanel">
+                    <!-- Technical details rendered by JS -->
+                </div>
+            </div>
+
+            <!-- ── PAGE: PREDICTIVE MAINTENANCE ───────────────────────── -->
+            <div class="page-view" id="page-predictive">
+                <div class="section-header">
+                    <div class="sec-label">Predictive Maintenance</div>
+                    <div class="sec-subtitle">Remaining useful life and maintenance planning</div>
+                </div>
+                <div class="rul-proto-banner">
+                    <div class="rul-proto-title">⚠ PROTOTYPE — No RUL Model Connected</div>
+                    <div class="rul-proto-text">
+                        This section is a prototype interface for future Remaining Useful Life (RUL) predictions.<br><br>
+                        <strong>No trained RUL model exists in this project.</strong> The anomaly score and health state displayed elsewhere
+                        are <em>not</em> equivalent to RUL. A genuine RUL prediction requires a dedicated regression model trained on
+                        run-to-failure data with appropriate uncertainty quantification.<br><br>
+                        When Phase 2B connects the Phase 1 ML pipeline, this panel will display:<br>
+                        • Estimated remaining flight hours<br>
+                        • Confidence interval<br>
+                        • Degradation curve projection<br>
+                        • Scheduled maintenance recommendations
+                    </div>
+                </div>
+                <div id="predictiveContent">
+                    <!-- Degradation trends rendered by JS -->
+                </div>
+            </div>
+
+            <!-- ── PAGE: ALERTS ───────────────────────────────────────── -->
+            <div class="page-view" id="page-alerts">
+                <div class="section-header">
+                    <div class="sec-label">Alerts & Diagnostics</div>
+                    <div class="sec-subtitle">Event log for current scenario (demo-generated)</div>
+                </div>
+                <div class="alert-filters" id="alertFilters">
+                    <!-- Filter buttons rendered by JS -->
+                </div>
+                <div class="panel">
+                    <table class="alerts-table" id="alertsTable">
+                        <thead>
+                            <tr>
+                                <th>Severity</th>
+                                <th>Time</th>
+                                <th>Sensor</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alertsBody">
+                            <!-- Rows rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── PAGE: SETTINGS ─────────────────────────────────────── -->
+            <div class="page-view" id="page-settings">
+                <div class="section-header">
+                    <div class="sec-label">Settings / About</div>
+                </div>
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <div class="setting-title">Application Info</div>
+                        <div class="setting-row"><span class="setting-label">Application</span><span class="setting-value">AeroTwin</span></div>
+                        <div class="setting-row"><span class="setting-label">Version</span><span class="setting-value">Phase 2A</span></div>
+                        <div class="setting-row"><span class="setting-label">Team</span><span class="setting-value">AeroSentinels</span></div>
+                        <div class="setting-row"><span class="setting-label">Data Source</span><span class="setting-value" id="settingDataSource">Demo (Synthetic)</span></div>
+                        <div class="setting-row"><span class="setting-label">ML Pipeline</span><span class="setting-value">Not Connected</span></div>
+                        <div class="setting-row"><span class="setting-label">RUL Model</span><span class="setting-value">Not Available</span></div>
+                    </div>
+                    <div class="setting-group">
+                        <div class="setting-title">Sensor Configuration</div>
+                        <div class="setting-row"><span class="setting-label">RPM</span><span class="setting-value">rpm</span></div>
+                        <div class="setting-row"><span class="setting-label">Oil Pressure</span><span class="setting-value">bar</span></div>
+                        <div class="setting-row"><span class="setting-label">Oil Temperature</span><span class="setting-value">°C</span></div>
+                        <div class="setting-row"><span class="setting-label">EGT</span><span class="setting-value">°C</span></div>
+                        <div class="setting-row"><span class="setting-label">Vibration</span><span class="setting-value">g</span></div>
+                    </div>
+                    <div class="setting-group">
+                        <div class="setting-title">Anomaly Thresholds</div>
+                        <div class="setting-row"><span class="setting-label">WARNING</span><span class="setting-value" style="color:var(--warning)">0.35</span></div>
+                        <div class="setting-row"><span class="setting-label">ALARM</span><span class="setting-value" style="color:var(--alarm)">0.65</span></div>
+                        <div class="setting-row"><span class="setting-label">EMERGENCY</span><span class="setting-value" style="color:var(--emergency)">0.85</span></div>
+                    </div>
+                    <div class="setting-group">
+                        <div class="setting-title">Data Contract (Phase 2B)</div>
+                        <div class="setting-row"><span class="setting-label">sensor_values</span><span class="setting-value">dict[str, float]</span></div>
+                        <div class="setting-row"><span class="setting-label">anomaly_score</span><span class="setting-value">float 0–1</span></div>
+                        <div class="setting-row"><span class="setting-label">health_state</span><span class="setting-value">NORMAL|WARNING|ALARM|EMERGENCY</span></div>
+                        <div class="setting-row"><span class="setting-label">sensor_contributions</span><span class="setting-value">dict[str, float]</span></div>
+                        <div class="setting-row"><span class="setting-label">trend_data</span><span class="setting-value">dict[str, list[float]]</span></div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /content-area -->
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-brand">⬡ AEROTWIN • AEROSENTINELS</div>
+            <div class="footer-notice">
+                Software prototype using synthetic piston-engine-style telemetry.<br>
+                Not certified for real-world flight or safety-critical decisions.
+            </div>
+        </footer>
+
+    </div><!-- /main-area -->
+
+</div><!-- /app-shell -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
